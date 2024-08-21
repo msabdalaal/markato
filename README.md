@@ -24,6 +24,9 @@
 - Multiuser support
 - Diffrent users permissions based on the user type (Admin, Normal User)
 
+* Users for testing: 
+  - admin: admin@gmail.com, 123123aa
+  - user: newuser@gmail.com, 123123aa
 ## Technologies
 
 - ReactJS, React Router, TailwindCSS, FontAwesome Axiso, ContextAPI, NodeJS, ExpressJS, MongoDB, MongooseDB, Bcrypt.
