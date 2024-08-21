@@ -7,6 +7,7 @@ import {
 import { ProductType, ShoppingCartProduct } from "../types";
 interface ShoppingCartListContextInterface {
   shoppingCartList: ShoppingCartProduct[];
+  emptyCart: () => void;
   totalAmount: number;
   addItem: (addedProduct: ProductType) => void
   removeItem: (removedProduct: ShoppingCartProduct) => void
@@ -21,7 +22,6 @@ export default function ShoppingCartListProvider<P extends object>({ children }:
 
   const addItem = (addedProduct: ProductType) => {
     if (shoppingCartList.find(product => product.product._id == addedProduct._id)) {
-      console.log("herer2")
       const NewList = [...shoppingCartList];
       const productIndex = NewList.findIndex(product => product.product._id == addedProduct._id);
       if (productIndex !== -1) {
@@ -51,12 +51,18 @@ export default function ShoppingCartListProvider<P extends object>({ children }:
     })
     setTotalAmout(TotalAmount)
   }
+
+  const emptyCart = () => {
+    setShoppingCartList([])
+    setTotalAmout(0)
+  }
+
   useEffect(() => {
     updateTotalAmount()
   }, [shoppingCartList])
   return (
     <ShoppingCartListContext.Provider
-      value={{ shoppingCartList, addItem, removeItem, totalAmount }}
+      value={{ shoppingCartList, addItem, emptyCart, removeItem, totalAmount }}
 
     >
       {children}

@@ -1,15 +1,13 @@
 import React, { ReactElement, useContext, useEffect } from 'react'
-// import { products } from '../products'
 import { ShoppingCartListContext } from '../providers/ShoppingCartProvider'
 import { ProductListContext } from '../providers/ProductListContext'
 import { faBackward } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { useNavigate } from 'react-router-dom'
-import { ProductType } from '../types'
 function ProductDetails(): ReactElement {
   const { productsList } = useContext(ProductListContext)
   const { addItem } = useContext(ShoppingCartListContext)
-  const ProductID = +location.pathname.slice(1)
+  const ProductID = location.pathname.slice(1)
   const product = productsList?.find((product => product._id == ProductID))
   const navigate = useNavigate();
 
@@ -54,7 +52,6 @@ function ProductDetails(): ReactElement {
             <div className="flex items-center justify-start mt-6">
               <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg mr-4" onClick={() => {
                 if (product) {
-                  console.log("here")
                   addItem?.(product);
                 }
               }}>

@@ -2,10 +2,13 @@ import React, { ReactElement, useContext, useState } from 'react'
 import { ShoppingCartListContext } from '../providers/ShoppingCartProvider'
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCartShopping, faClose, faTrash } from "@fortawesome/free-solid-svg-icons";
+import { AuthContext } from '../providers/AuthContext';
+import { Link } from 'react-router-dom';
 
 function shoppingCart(): ReactElement {
-  const { shoppingCartList, totalAmount, removeItem } = useContext(ShoppingCartListContext)
+  const { shoppingCartList, emptyCart, totalAmount, removeItem } = useContext(ShoppingCartListContext)
   const [showShoppingCart, setShowShoppingCart] = useState(false)
+  const { auth } = useContext(AuthContext);
   const DisplayItems = () => {
     return shoppingCartList?.map(product => {
       return <div key={product.product._id} className="flex-1 overflow-y-auto">
@@ -13,7 +16,9 @@ function shoppingCart(): ReactElement {
         <div className="border-b py-4 flex items-center">
           <img className="w-16 h-16 rounded-lg object-cover" loading='lazy' src={product.product.imageUrl} alt="Product Image" />
           <div className="ml-4 flex-1">
-            <h3 className="text-lg font-semibold">{product.product.name}</h3>
+            <h2 className="text-lg font-semibold">
+              {product.product.name}
+            </h2>
             <p className="text-gray-500">Quantity: {product.quantity}</p>
             <p className="text-gray-900 font-bold">${product.totalPrice}</p>
           </div>
@@ -28,11 +33,17 @@ function shoppingCart(): ReactElement {
       </div>
     })
   }
+
+  const handleCheckout = () => {
+    alert("order has been sent")
+    emptyCart?.()
+  }
   return (
     <>
-      <button id="cartButton" className="fixed z-10 top-4 right-4 bg-blue-500 text-white p-2 rounded-lg text-2xl shadow-lg" onClick={() => setShowShoppingCart(prev => !prev)}>
+      {auth && <button id="cartButton" className="fixed z-10 top-4 right-4 bg-blue-500 text-white p-2 rounded-lg text-2xl shadow-lg" onClick={() => setShowShoppingCart(prev => !prev)}>
         <FontAwesomeIcon icon={faCartShopping} />{""}
-      </button >
+        {shoppingCartList?.length !== 0 && <p className='absolute -top-2 -right-2  bg-red-400 w-5 h-5 text-sm rounded-full'>{shoppingCartList?.length}</p>
+        }      </button >}
       <div id="sidebar" className={`fixed z-20 top-0 right-0 w-80 h-full bg-white shadow-lg transform ${showShoppingCart ? "" : "translate-x-full"} transition-transform duration-300 ease-in-out`}>
         <div className="p-6 flex flex-col h-full">
           <div className="flex justify-between items-center mb-4">
@@ -46,7 +57,9 @@ function shoppingCart(): ReactElement {
               <span>Total</span>
               <span>${totalAmount}</span>
             </div>
-            <button className="mt-4 w-full bg-green-500 hover:bg-green-700 text-white py-3 rounded-lg">
+            <button className="mt-4 w-full bg-green-500 hover:bg-green-700 text-white py-3 rounded-lg" onClick={() => {
+              handleCheckout()
+            }}>
               Checkout
             </button>
           </div> :
