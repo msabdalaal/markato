@@ -16,7 +16,7 @@ function App(): ReactElement {
       return <p className='text-center'>No products found</p>
     }
     return (
-      <div className="grid grid-cols-1 sm:grid-cols-2  md:grid-cols-3 lg:grid-cols-4 gap-5">
+      <div className="grid grid-cols-1 sm:grid-cols-2  md:grid-cols-3 xl:grid-cols-4 gap-5">
         {listToDisplay.map((product: ProductType) => (
           <Product key={product._id} product={product} />
         ))}
@@ -30,6 +30,7 @@ function App(): ReactElement {
   return (
     <>
       {loading ? <l-ring size="60" color="#000" /> : <section className="bg-gray-100 flex flex-col items-center justify-center py-20 min-h-screen">
+
         <h1 className='text-3xl font-bold mb-10'>Products</h1>
         <div className="w-full max-w-md mb-10">
           <div className="relative">

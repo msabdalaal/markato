@@ -8,6 +8,7 @@ import {
 import { ProductType } from "../types";
 import { url } from "../variables";
 import axios from "axios";
+import { AuthContext } from "./AuthContext";
 
 interface ProductListContextInterface {
   productsList: ProductType[];
@@ -25,6 +26,7 @@ export default function ProductListProvider<P extends object>({ children }: Prop
   const [productsList, setProductsList] = useState<ProductType[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string>();
+  const { auth } = useContext(AuthContext)
 
   const getProducts = async () => {
     try {
@@ -32,7 +34,7 @@ export default function ProductListProvider<P extends object>({ children }: Prop
       const response = await axios.get(`${url}/products`, {
         withCredentials: true,
       });
-      setProductsList(response.data.products);
+      setProductsList(response.data.newList);
 
     } catch (error) {
       if (error instanceof Error) {
@@ -44,8 +46,8 @@ export default function ProductListProvider<P extends object>({ children }: Prop
   };
 
   useEffect(() => {
-    getProducts();
-  }, []);
+    if (auth) getProducts()
+  }, [auth])
 
   return (
     <ProductListContext.Provider

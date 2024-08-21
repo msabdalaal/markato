@@ -3,12 +3,14 @@ import { ShoppingCartListContext } from '../providers/ShoppingCartProvider'
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCartShopping, faClose, faTrash } from "@fortawesome/free-solid-svg-icons";
 import { AuthContext } from '../providers/AuthContext';
-import { Link } from 'react-router-dom';
+import { Sale } from '../types';
+import { useAddSale } from '../hooks/sales';
 
 function shoppingCart(): ReactElement {
   const { shoppingCartList, emptyCart, totalAmount, removeItem } = useContext(ShoppingCartListContext)
   const [showShoppingCart, setShowShoppingCart] = useState(false)
-  const { auth } = useContext(AuthContext);
+  const { auth, loggedUser } = useContext(AuthContext);
+  const { addEntity: addSale } = useAddSale()
   const DisplayItems = () => {
     return shoppingCartList?.map(product => {
       return <div key={product.product._id} className="flex-1 overflow-y-auto">
@@ -33,14 +35,38 @@ function shoppingCart(): ReactElement {
       </div>
     })
   }
+  const getDate = () => {
+    const objectDate = new Date();
+    const day = objectDate.getDate();
 
+    const month = objectDate.getMonth() + 1;
+
+    const year = objectDate.getFullYear();
+
+    return `${year}-${month < 10 ? `0${month}` : month}-${day < 10 ? `0${day}` : day
+      }`;
+  };
   const handleCheckout = () => {
-    alert("order has been sent")
-    emptyCart?.()
+    if (shoppingCartList?.length === 0) {
+      alert("Cart is empty")
+      return
+    } else {
+      const checkout: Sale = {
+        date: getDate(),
+        userID: loggedUser?._id ?? "",
+        items: shoppingCartList ?? [],
+        totalAmount: totalAmount ?? 0
+
+      }
+      addSale(checkout)
+      alert("Order Has Been Sent")
+      emptyCart?.()
+    }
+
   }
   return (
     <>
-      {auth && <button id="cartButton" className="fixed z-10 top-4 right-4 bg-blue-500 text-white p-2 rounded-lg text-2xl shadow-lg" onClick={() => setShowShoppingCart(prev => !prev)}>
+      {auth && <button id="cartButton" className="fixed z-10 top-4 right-4 bg-blue-500 hover:bg-blue-400 text-white p-2 rounded-lg text-2xl shadow-lg" onClick={() => setShowShoppingCart(prev => !prev)}>
         <FontAwesomeIcon icon={faCartShopping} />{""}
         {shoppingCartList?.length !== 0 && <p className='absolute -top-2 -right-2  bg-red-400 w-5 h-5 text-sm rounded-full'>{shoppingCartList?.length}</p>
         }      </button >}

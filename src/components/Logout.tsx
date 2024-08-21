@@ -14,7 +14,7 @@ export default function Logout() {
   }
   return (
     <div>
-      {auth && <button className="fixed top-4 left-4 text-2xl" onClick={() => handelLogout()}>
+      {auth && <button className="fixed top-4 left-4 text-2xl hover:text-gray-600" onClick={() => handelLogout()}>
         <FontAwesomeIcon icon={faSignOut} />{""}
       </button>}
     </div>

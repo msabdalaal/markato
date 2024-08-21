@@ -1,12 +1,14 @@
 import {
   createContext,
   PropsWithChildren,
+  useContext,
   useEffect,
   useState,
 } from "react";
 import { User } from "../types";
 import { url } from "../variables";
 import axios from "axios";
+import { AuthContext } from "./AuthContext";
 
 interface UserListContextInterface {
   usersList: User[];
@@ -24,6 +26,7 @@ export default function UserListProvider<P extends object>({ children }: PropsWi
   const [usersList, setUsersList] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string>();
+  const { auth } = useContext(AuthContext)
 
   const getUsers = async () => {
     try {
@@ -31,8 +34,7 @@ export default function UserListProvider<P extends object>({ children }: PropsWi
       const response = await axios.get(`${url}/users`, {
         withCredentials: true,
       });
-      setUsersList(response.data.users);
-
+      setUsersList(response.data.newList);
     } catch (error) {
       if (error instanceof Error) {
         setError(error.message);
@@ -43,8 +45,8 @@ export default function UserListProvider<P extends object>({ children }: PropsWi
   };
 
   useEffect(() => {
-    getUsers();
-  }, []);
+    if (auth) getUsers()
+  }, [auth])
 
   return (
     <UserListContext.Provider
