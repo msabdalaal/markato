@@ -1,6 +1,6 @@
 import React, { ReactElement, useContext, useEffect } from 'react'
-import { ShoppingCartListContext } from '../providers/ShoppingCartProvider'
-import { ProductListContext } from '../providers/ProductListContext'
+import { ShoppingCartListContext } from '../../providers/ShoppingCartProvider'
+import { ProductListContext } from '../../providers/ProductListContext'
 import { faBackward } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { useNavigate } from 'react-router-dom'

@@ -2,23 +2,28 @@ import { Link, useNavigate } from "react-router-dom";
 // import { styles } from "../../root";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBackward } from "@fortawesome/free-solid-svg-icons";
-import { SalesListContext } from "../providers/SalesListContext";
+import { SalesListContext } from "../../../providers/SalesListContext";
 import { useContext, useEffect, useState } from "react";
-import { UserListContext } from "../providers/UserListContext";
-import { ProductListContext } from "../providers/ProductListContext";
-import { User, Sale } from "../types";
-import { AuthContext } from "..//providers/AuthContext";
+import { UserListContext } from "../../../providers/UserListContext";
+import { ProductListContext } from "../../../providers/ProductListContext";
+import { User, Sale } from "../../../types";
+import { AuthContext } from "../../../providers/AuthContext";
 
 export default function Receipt() {
-  const { pathname } = location;
+  //Contexts
   const { salesList } = useContext(SalesListContext);
   const { usersList } = useContext(UserListContext);
   const { productsList } = useContext(ProductListContext);
-  const { loggedUser } = useContext(AuthContext);
+
+  //fetching product ID form the URL
+  const { pathname } = location;
   const receiptID = pathname.split("/")[2];
+
+  //States
   const [receipt, setReceipt] = useState<Sale>();
   const [customer, setCustomer] = useState<User>();
 
+  //determine the sale to be shown and the customer who made the sale
   useEffect(() => {
     const receipt = salesList?.find((sale) => sale._id === receiptID);
     setReceipt(receipt);
@@ -29,6 +34,7 @@ export default function Receipt() {
 
   }, [usersList, receipt, receiptID, salesList]);
 
+  //Displaying the receipt detalis
   const DisplayRecepit = () => {
     const itemsList = receipt?.items;
     if (receipt) {
@@ -43,8 +49,7 @@ export default function Receipt() {
             <td className={styles.td}>{index + 1}</td>
             <th scope="row" className={styles.tbody_th}>
               {
-                productsList?.find((product) => product._id === item.product._id)
-                  ?.name
+                product?.name
               }
             </th>
             <td className={styles.td}>
@@ -74,6 +79,7 @@ export default function Receipt() {
         <h1 className={styles.h1}>Recipt</h1>
         <div className={styles.container}>
           <div className="w-full mt-10">
+            {/* Receipt's general information */}
             <div className="flex justify-center gap-8">
               <h2 className="font-bold mb-4">
                 Customer Name:
@@ -90,7 +96,7 @@ export default function Receipt() {
                   .slice(0, 10)}`}</span>
               </h2>
             </div>
-
+            {/* Table of products in the receipt */}
             <table className="table-auto w-full">
               <thead className={styles.thead}>
                 <tr>
@@ -119,11 +125,8 @@ export default function Receipt() {
                 <DisplayRecepit />
               </tbody>
             </table>
+            {/* Total amount of the receipt */}
             <div className="mt-4 ml-2">
-              <h2 className="font-bold">
-                Subtotal:
-                <span className="font-normal ml-3">{`${receipt?.totalAmount.toLocaleString()} EGP`}</span>
-              </h2>
               <h2 className="font-bold">
                 Total:
                 <span className="font-normal ml-3">{`${receipt?.totalAmount.toLocaleString()} EGP`}</span>

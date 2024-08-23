@@ -28,8 +28,8 @@ function App(): ReactElement {
     setFilteredProducts(newList)
   }
   return (
-    <>
-      {loading ? <l-ring size="60" color="#000" /> : <section className="bg-gray-100 flex flex-col items-center justify-center py-20 min-h-screen">
+    <div className='flex justify-center items-center min-h-screen '>
+      {loading ? <l-ring size="60" color="#000" /> : <section className=" w-full bg-gray-100 flex flex-col items-center justify-center py-20 min-h-screen">
 
         <h1 className='text-3xl font-bold mb-10'>Products</h1>
         <div className="w-full max-w-md mb-10">
@@ -48,7 +48,7 @@ function App(): ReactElement {
         <div className="container flex justify-center items-center">
           <DisplayProduct />
         </div>
-      </section>}</>
+      </section>}</div>
   )
 }
 

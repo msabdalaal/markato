@@ -1,16 +1,17 @@
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faBackward } from "@fortawesome/free-solid-svg-icons";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { useContext, useState } from "react";
-import { Sale } from "../types";
-import { SalesListContext } from "../providers/SalesListContext";
-import { UserListContext } from "../providers/UserListContext";
+import { Sale } from "../../../types";
+import { SalesListContext } from "../../../providers/SalesListContext";
+import { UserListContext } from "../../../providers/UserListContext";
+import ReceiptItem from "./ReceiptItem";
 function SalesManagement() {
+  //contexts
   const { salesList } = useContext(SalesListContext);
   const { usersList } = useContext(UserListContext);
+  //states
   const [searchQuery, setSearchQuery] = useState<string>("");
-  const navigate = useNavigate();
 
+  //displaying all the receipts
   const DisplayRecepits = () => {
     let receiptsToDisplay: Sale[] = [];
     if (salesList) {
@@ -30,27 +31,11 @@ function SalesManagement() {
           const user = usersList?.find(
             (user) => user._id === receipt.userID
           )
-          console.log(user)
-          return (
-            <tr key={receipt._id}>
-              <td className={styles.td}>{index + 1}</td>
-              <th scope="row" className={styles.tbody_th}>
-                {
-                  user?.name
-                }
-              </th>
-              <td className={styles.td}>{receipt.items.length}</td>
-              <td className={styles.td}>
-                {`${receipt.totalAmount.toLocaleString()} EGP`}
-              </td>
-              <td className={styles.td}>{receipt.date}</td>
-              <td>
-                <Link to={`/Sales/${receipt._id}`} className="button">
-                  View
-                </Link>
-              </td>
-            </tr>
-          );
+          if (user) {
+            return (
+              <ReceiptItem index={index} receipt={receipt} user={user} key={receipt._id} />
+            );
+          }
         });
     }
   };
@@ -58,16 +43,6 @@ function SalesManagement() {
   return (
     <>
       <div className={styles.container}>
-        <button
-          onClick={() => {
-            navigate(-1);
-          }}
-          className={styles.button}
-          type="button"
-        >
-          <FontAwesomeIcon icon={faBackward} />
-          {""}
-        </button>
         <h1 className={styles.h1 + " relative mb-20 top-0"}>Receipts</h1>
 
         <div className="w-full max-w-md mb-10">
@@ -122,7 +97,6 @@ const styles = {
   tr: "bg-white border-b dark:bg-gray-800 dark:border-gray-700",
   tbody_th:
     " px-6 py-4 font-medium text-gray-900 whitespace-nowrap",
-  td: "text-center px-6 py-4  ",
   h1: "absolute top-16 lg:top-20 text-3xl font-bold",
   container: "flex justify-center flex-col items-center w-full gap-4",
   button:

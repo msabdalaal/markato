@@ -1,11 +1,10 @@
 import React, { useContext, useState } from 'react'
-import { AuthContext } from '../providers/AuthContext';
-import { ProductListContext } from '../providers/ProductListContext';
+import { ProductListContext } from '../../../providers/ProductListContext';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPenToSquare, faPlus, faTrashCan } from '@fortawesome/free-solid-svg-icons';
-import { ProductType } from '../types';
-import { useAddProduct, useDeleteProduct, useUpdateProduct } from '../hooks/products';
-import { imageURLAlert, imageURLRegex, priceAlert, priceRegex, smallNumberAlert, smallNumberRegex, smallStringAlert, smallStringRegex } from '../Regex';
+import { ProductType } from '../../../types';
+import { useAddProduct, useDeleteProduct, useUpdateProduct } from '../../../hooks/products';
+import { imageURLAlert, imageURLRegex, priceAlert, priceRegex, smallNumberAlert, smallNumberRegex, smallStringAlert, smallStringRegex } from '../../../Regex';
 
 const styles = {
   thead:
@@ -20,8 +19,13 @@ const styles = {
 };
 
 export default function ProductManegment() {
-  const [searchQuery, setSearchQuery] = useState("")
+  //Contexts
   const { productsList } = useContext(ProductListContext)
+  const { addEntity: addProduct } = useAddProduct()
+  const { updateEntity: updateProduct } = useUpdateProduct()
+  const { deleteEntity: deleteProduct } = useDeleteProduct()
+  //States
+  const [searchQuery, setSearchQuery] = useState("")
   const [filteredProducts, setFilteredProducts] = useState(productsList)
   const [updating, setUpdating] = useState(false);
   const [productName, setProductName] = useState<string>("");
@@ -32,13 +36,13 @@ export default function ProductManegment() {
   const [productDesctiption, setProductDesctiption] = useState<string>("");
   const [productImageURL, setProductImageURL] = useState<string>("");
   const [updatingID, setUpdatingID] = useState<string>("");
-  const { addEntity: addProduct } = useAddProduct()
-  const { updateEntity: updateProduct } = useUpdateProduct()
-  const { deleteEntity: deleteProduct } = useDeleteProduct()
+
+  //handlig Searching for products
   const handleSearch = () => {
     const newList = productsList?.filter(product => product.name.toLocaleLowerCase().includes(searchQuery.toLocaleLowerCase().trim()))
     setFilteredProducts(newList)
   }
+  //Form clearing 
   const clearForm = () => {
     setProductName("");
     setProductPrice("");
@@ -47,6 +51,7 @@ export default function ProductManegment() {
     setProductDesctiption("");
     setProductImageURL("");
   };
+  //validating the form
   const validteForm = () => {
     if (!productName.match(smallStringRegex)) {
       smallStringAlert("Product Name");
@@ -65,6 +70,8 @@ export default function ProductManegment() {
       return false;
     } else return true;
   };
+
+  //Adding new product
   const AddNewProduct = () => {
     if (!validteForm()) return;
     const product: ProductType = {
@@ -82,20 +89,19 @@ export default function ProductManegment() {
     }
     clearForm();
   };
-
+  //Handlig the update, moving all the products details to the iputs
   const handleUpdate = (id: string) => {
     setUpdating?.(true);
     const product = productsList?.find((product) => product._id === id);
     setProductName?.(product?.name || "");
     setProductPrice?.(product?.price.toString() || "0");
     setProductQuantityInStock?.(product?.stock.toString() || "");
-
     setProductDesctiption?.(product?.description || "");
     setProductImageURL?.(product?.imageUrl || "");
     setUpdatingID(id);
   };
 
-
+  //the process of updating itself
   const updateItem = () => {
     if (productsList) {
       if (!validteForm()) return;
@@ -111,11 +117,12 @@ export default function ProductManegment() {
       if (confirm("Are you sure you want to Update this product?")) {
         updateProduct(updatingID ?? "", newProduct);
         alert("Product updated successfully")
+        clearForm()
         setUpdating(false)
       }
     }
   }
-
+  //deleting a product
   const deleteItem = (id: string) => {
     if (productsList) {
       if (confirm("Are you sure you want to delete this product?")) {
@@ -123,7 +130,7 @@ export default function ProductManegment() {
       }
     }
   };
-
+  //diplaying the products to the table
   function DisplayList(productsList: ProductType[]) {
     const HTML: JSX.Element[] = [];
     productsList?.forEach((product, index) => {
@@ -164,16 +171,12 @@ export default function ProductManegment() {
     return HTML;
   }
 
-
-
-
-
   return (
     <div className='flex items-center justify-center'>
       <div className='container flex flex-col justify-center items-center'>
         <h1 className='font-bold text-3xl my-10'>product Management</h1>
 
-
+        {/* Form for adding and updating */}
         <div className="container grid grid-cols-2 w-full gap-3">
           <div>
             <label htmlFor="ProductName" className={styles.label}>
@@ -284,7 +287,11 @@ export default function ProductManegment() {
               Update Product
             </button>
           </div>}
+          {/* Form for adding and updating */}
         </div>
+
+        {/* Search Input */}
+
         <div className="w-full max-w-md mb-10">
           <div className="relative">
             <input onChange={(e) => {
@@ -298,6 +305,9 @@ export default function ProductManegment() {
             </div>
           </div>
         </div>
+
+        {/* product List Table */}
+
         <div className="max-h-screen overflow-auto">
           <table className="table-auto ">
             <thead className={styles.thead}>
@@ -333,6 +343,7 @@ export default function ProductManegment() {
             </tbody>
           </table>
         </div>
+
       </div>
     </div>
 
